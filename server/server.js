@@ -1,5 +1,5 @@
 var express = require('express');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
 
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
@@ -24,3 +24,5 @@ app.post('/todos', (req, res) => {
 app.listen(3000, () => {
     console.log('Your app is running at 3000');
 });
+
+module.exports = {app};

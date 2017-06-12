@@ -4,22 +4,9 @@ const request = require('supertest');
 
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
+const {todos, populateTodos} = require('./seed/seed');
 
-const someTodos = [{
-    _id: new ObjectID(),
-    text: "First dummy todo"
-}, {
-    _id: new ObjectID(),
-    text: "Second dummy todo",
-    completed: true,
-    completedAt: 23456
-}];
-
-beforeEach((done) => {
-    Todo.remove({}).then(() => {
-        return Todo.insertMany(someTodos);
-    }).then(() => done());
-});
+beforeEach(populateTodos);
 
 describe('POST /todos', () => {
     it('should create a new todo', (done) => {
@@ -78,10 +65,10 @@ describe('GET /todos', () => {
 describe('GET /todos/:id', () => {
     it('should get all todos', (done) => {
         request(app)
-            .get(`/todos/${someTodos[0]._id.toHexString()}`)
+            .get(`/todos/${todos[0]._id.toHexString()}`)
             .expect(200)
             .expect((res) => {
-                expect(res.body.todo.text).toBe(someTodos[0].text);
+                expect(res.body.todo.text).toBe(todos[0].text);
             })
             .end(done);
     });
@@ -104,7 +91,7 @@ describe('GET /todos/:id', () => {
 
 describe('DELETE /todos/:id', () => {
     it('should remove an item from database', (done) => {
-        var hexId = someTodos[0]._id.toHexString();
+        var hexId = todos[0]._id.toHexString();
         request(app)
             .delete(`/todos/${hexId}`)
             .expect(200)
@@ -140,7 +127,7 @@ describe('DELETE /todos/:id', () => {
 
 describe('PATCH /todos/:id', () => {
   it('should update the todo', (done) => {
-    var hexId = someTodos[0]._id.toHexString();
+    var hexId = todos[0]._id.toHexString();
     var completedTodo = {
       text: "This is completed todo",
       completed: true
@@ -167,7 +154,7 @@ describe('PATCH /todos/:id', () => {
   });
 
   it('should set clear completedAt when completed is false', (done) => {
-    var hexId = someTodos[1]._id.toHexString();
+    var hexId = todos[1]._id.toHexString();
     var incompletedTodo = {
       text: "This is an incompleted todo",
       completed: false
